@@ -657,6 +657,15 @@ function enterApp(){
   pullState(true);
 }
 
+/* ---------- shared app state (must be declared before boot() runs,
+   since boot() can call enterApp()->wireAppEvents() synchronously
+   on page load for a returning user, before later `let` statements
+   in this file would otherwise have initialized) ---------- */
+let calMonth = new Date();
+let selectedDate = new Date();
+let currentImages = [];
+let eventsWired = false;
+
 /* ---------- boot ---------- */
 (async function boot(){
   if(authToken && authUsername){
@@ -671,11 +680,6 @@ function enterApp(){
 /* ============================================================
    APP RENDERING + LOGIC (runs only once logged in)
 ============================================================ */
-let calMonth = new Date();
-let selectedDate = new Date();
-let currentImages = [];
-let eventsWired = false;
-
 function wireAppEvents(){
   if(eventsWired) return;
   eventsWired = true;
