@@ -203,8 +203,10 @@ table.history-table tr.today-row{ background:var(--surface2); }
 .upload-hint{ font-size:11px; color:var(--ink-soft); }
 .img-grid{ margin-top:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:8px; }
 .img-item{ position:relative; border:2px solid var(--ink); border-radius:14px; overflow:hidden; aspect-ratio:1; }
-.img-item img{ width:100%; height:100%; object-fit:cover; display:block; }
-.img-remove{ position:absolute; top:5px; right:5px; width:24px; height:24px; background:#fff; border:2px solid var(--ink); border-radius:50%; cursor:pointer; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; }
+.img-item img{ width:100%; height:100%; object-fit:cover; display:block; cursor:pointer; }
+.img-remove{ position:absolute; top:5px; right:5px; width:24px; height:24px; background:#fff; border:2px solid var(--ink); border-radius:50%; cursor:pointer; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; z-index:2; }
+#photo-overlay-img{ max-width:min(92vw,700px); max-height:88vh; border-radius:16px; border:2px solid #fff; box-shadow:0 20px 60px rgba(0,0,0,.5); object-fit:contain; cursor:default; }
+.photo-close{ position:fixed; top:18px; right:18px; width:40px; height:40px; background:#fff; border:2px solid var(--ink); border-radius:50%; cursor:pointer; font-weight:800; font-size:16px; display:flex; align-items:center; justify-content:center; z-index:2; }
 
 .overlay{ position:fixed; inset:0; background:rgba(24,24,27,.6); backdrop-filter:blur(2px); z-index:100; display:none; align-items:center; justify-content:center; padding:20px; }
 .overlay.show{ display:flex; }
@@ -423,6 +425,11 @@ table.history-table tr.today-row{ background:var(--surface2); }
   </div>
 </div>
 
+<div class="overlay" id="photo-overlay">
+  <button class="photo-close" id="photo-close" title="Close">✕</button>
+  <img id="photo-overlay-img" src="" alt="Journal photo" />
+</div>
+
 <div class="toast-wrap" id="toast-wrap"></div>
 
 <div class="install-banner" id="install-banner">
@@ -460,7 +467,8 @@ const $ = (id) => document.getElementById(id);
 ============================================================ */
 const PERMANENT_QUESTS = [
   { id:'math', title:'Maths Class',            icon:'➗', xp:20 },
-  { id:'gs',   title:'G.S. Class',              icon:'🌍', xp:20 },
+  { id:'gs',   title:'G.S. Class #1',           icon:'🌍', xp:20 },
+  { id:'gs2',  title:'G.S. Class #2',           icon:'🌍', xp:20 },
   { id:'eng1', title:'English Revision #1',     icon:'📖', xp:15 },
   { id:'eng2', title:'English Revision #2',     icon:'📖', xp:15 },
 ];
@@ -1046,14 +1054,34 @@ function loadEntry(date){
 function renderJournalImages(){
   $('journal-images').innerHTML = currentImages.map((src,i) => `
     <div class="img-item">
-      <img src="${src}" alt="Journal photo ${i+1}" />
-      <button class="img-remove" data-idx="${i}">✕</button>
+      <img src="${src}" alt="Journal photo ${i+1}" data-idx="${i}" />
+      <button class="img-remove" data-idx="${i}" title="Delete photo">✕</button>
     </div>
   `).join('');
+  $('journal-images').querySelectorAll('.img-item img').forEach(img => {
+    img.onclick = () => openPhotoOverlay(img.src);
+  });
   $('journal-images').querySelectorAll('.img-remove').forEach(b => {
-    b.onclick = () => { currentImages.splice(Number(b.dataset.idx),1); renderJournalImages(); };
+    b.onclick = (e) => {
+      e.stopPropagation();
+      if(!confirm('Delete this photo? This can\'t be undone.')) return;
+      currentImages.splice(Number(b.dataset.idx),1);
+      renderJournalImages();
+    };
   });
 }
+
+function openPhotoOverlay(src){
+  $('photo-overlay-img').src = src;
+  $('photo-overlay').classList.add('show');
+}
+function closePhotoOverlay(){
+  $('photo-overlay').classList.remove('show');
+  $('photo-overlay-img').src = '';
+}
+$('photo-overlay').onclick = (e) => { if(e.target.id === 'photo-overlay') closePhotoOverlay(); };
+$('photo-close').onclick = closePhotoOverlay;
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closePhotoOverlay(); });
 
 function resizeImage(file){
   return new Promise((resolve, reject) => {
