@@ -1,0 +1,1129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>StudyQuest</title>
+<link rel="manifest" href="./manifest.json" />
+<link rel="icon" href="./icon-192.png" />
+<link rel="apple-touch-icon" href="./icon-192.png" />
+<meta name="theme-color" content="#FF8C70" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="StudyQuest" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Work+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+:root{
+  --bg:#FFFDF9;
+  --surface:#FFFFFF;
+  --surface2:#F4F0FF;
+  --surface3:#EAF6F0;
+  --ink:#18181B;
+  --ink-soft:#52525B;
+  --orange:#FF8C70;
+  --purple:#A78BFA;
+  --green:#A7F3D0;
+  --yellow:#FDE047;
+  --pink:#FECACA;
+  --red:#FCA5A5;
+  --radius:16px;
+  --shadow: 4px 4px 0px 0px rgba(24,24,27,1);
+  --shadow-lg: 6px 6px 0px 0px rgba(24,24,27,1);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{ overscroll-behavior-y:none; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Work Sans', sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding-top:env(safe-area-inset-top);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+h1,h2,h3,.font-heading{ font-family:'Outfit', sans-serif; }
+::selection{ background:var(--orange); }
+.eyebrow{ font-family:'Outfit',sans-serif; text-transform:uppercase; letter-spacing:.2em; font-size:11px; font-weight:700; color:var(--ink-soft); }
+
+.wrap{ max-width:1100px; margin:0 auto; padding:20px 16px 90px; }
+.header{
+  position:sticky; top:0; z-index:30;
+  background:var(--bg); border-bottom:2px solid var(--ink);
+  padding:12px 16px;
+  padding-top:calc(12px + env(safe-area-inset-top));
+}
+.header-inner{ max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.brand{ display:flex; align-items:center; gap:9px; }
+.brand-badge{
+  width:34px; height:34px; background:var(--purple); border:2px solid var(--ink); border-radius:10px;
+  display:flex; align-items:center; justify-content:center; box-shadow:2px 2px 0 rgba(24,24,27,1); font-size:16px;
+}
+.brand-name{ font-family:'Outfit',sans-serif; font-weight:800; font-size:18px; letter-spacing:-0.02em; }
+.sync-badge{ font-size:11px; font-weight:700; color:var(--ink-soft); display:flex; align-items:center; gap:4px; margin-left:2px; }
+.nav{ display:flex; gap:6px; flex-wrap:wrap; }
+.nav-btn{
+  font-family:'Outfit',sans-serif; font-weight:700; font-size:13px; cursor:pointer;
+  border:2px solid var(--ink); border-radius:999px; background:var(--surface); padding:8px 12px;
+  display:flex; align-items:center; gap:5px; transition:transform .15s ease, box-shadow .15s ease;
+}
+.nav-btn:active{ transform:translateY(1px); }
+.nav-btn.active{ background:var(--orange); }
+.welcome{ margin:18px 0 4px; }
+h1.page-title{ font-weight:800; font-size:28px; letter-spacing:-0.02em; margin:2px 0 18px; }
+
+.card{ background:var(--surface); border:2px solid var(--ink); border-radius:var(--radius); box-shadow:var(--shadow); }
+
+.grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+@media(min-width:820px){
+  .grid{ grid-template-columns:repeat(12,1fr); }
+  .g-quote{ grid-column:span 7; }
+  .g-xp{ grid-column:span 5; }
+  .g-stats{ grid-column:span 5; }
+  .g-quests{ grid-column:span 7; }
+  .g-tasks{ grid-column:span 12; }
+  .g-ach{ grid-column:span 12; }
+}
+
+.quote-card{ position:relative; overflow:hidden; min-height:190px; padding:20px; display:flex; flex-direction:column; justify-content:space-between; }
+.quote-card .quote-bg{ position:absolute; inset:0; background-size:cover; background-position:center; }
+.quote-card .quote-tint{ position:absolute; inset:0; background:rgba(255,255,255,.45); backdrop-filter:blur(2px); }
+.quote-card .quote-content{ position:relative; z-index:1; }
+.quote-mark{ font-size:30px; font-weight:800; }
+.quote-text{ font-weight:700; font-size:19px; line-height:1.35; letter-spacing:-0.01em; margin:8px 0 6px; }
+.quote-author{ font-family:'Outfit',sans-serif; text-transform:uppercase; letter-spacing:.2em; font-size:10px; font-weight:700; }
+
+.xp-card{ background:var(--surface2); padding:18px; }
+.xp-top{ display:flex; align-items:flex-end; justify-content:space-between; margin:8px 0 12px; }
+.level-num{ font-weight:800; font-size:40px; line-height:1; display:inline-block; }
+.level-num.pop{ animation:levelPop .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes levelPop{ 0%{ transform:scale(1.6); } 100%{ transform:scale(1); } }
+.xp-label{ font-weight:700; font-size:12px; color:var(--ink-soft); }
+.xp-track{ height:14px; border:2px solid var(--ink); border-radius:999px; background:#fff; overflow:hidden; }
+.xp-fill{ height:100%; background:var(--orange); transition:width .8s ease-out; }
+.xp-total{ margin-top:10px; font-size:12px; color:var(--ink-soft); }
+
+.stat-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; height:100%; }
+.stat-tile{ padding:12px; display:flex; flex-direction:column; gap:3px; justify-content:flex-start; }
+.stat-tile .icon{ font-size:18px; }
+.stat-val{ font-weight:800; font-size:22px; }
+.stat-lbl{ font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#3F3F46; }
+
+.task-card{ padding:18px; }
+.task-form{ display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.task-input{ flex:1; min-width:140px; padding:11px 14px; border:2px solid var(--ink); border-radius:12px; font-family:'Work Sans'; font-size:16px; }
+.task-input:focus, .diff-select:focus{ outline:2px solid var(--orange); outline-offset:1px; }
+.diff-select{ padding:11px 8px; border:2px solid var(--ink); border-radius:12px; font-family:'Outfit'; font-weight:700; font-size:13px; cursor:pointer; }
+.add-btn{ padding:11px 16px; background:var(--orange); border:2px solid var(--ink); border-radius:12px; font-weight:800; cursor:pointer; }
+.add-btn:active{ transform:translateY(1px); }
+.task-list{ display:flex; flex-direction:column; gap:9px; }
+.task-row{ display:flex; align-items:center; gap:10px; padding:12px; background:var(--bg); border:2px solid var(--ink); border-radius:12px; animation:fadeUp .35s ease both; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+.checkbox{ width:26px; height:26px; flex-shrink:0; border:2px solid var(--ink); border-radius:8px; background:#fff; cursor:pointer; }
+.checkbox:active{ transform:scale(.9); background:var(--green); }
+.task-title{ flex:1; font-weight:500; font-size:14px; word-break:break-word; }
+.pill{ padding:5px 10px; border:2px solid var(--ink); border-radius:999px; font-family:'Outfit'; font-weight:700; font-size:10px; white-space:nowrap; }
+.pill.easy{ background:var(--green); } .pill.medium{ background:var(--yellow); } .pill.hard{ background:var(--pink); }
+.del-btn{ background:none; border:none; cursor:pointer; color:var(--ink-soft); font-size:16px; padding:4px; opacity:.6; }
+.empty-msg{ text-align:center; padding:18px; color:var(--ink-soft); font-weight:500; font-size:14px; }
+.done-section{ margin-top:16px; padding-top:14px; border-top:2px dashed #D4D4D8; }
+.done-row{ display:flex; align-items:center; gap:9px; padding:9px 11px; background:var(--surface3); border:2px solid rgba(24,24,27,.15); border-radius:12px; margin-bottom:6px; font-size:13px; }
+.done-row .task-title{ text-decoration:line-through; color:var(--ink-soft); }
+
+/* --- permanent daily class quests --- */
+.quests-card{ padding:18px; }
+.quest-row{ display:flex; align-items:center; gap:10px; padding:12px; background:var(--bg); border:2px solid var(--ink); border-radius:12px; margin-bottom:9px; flex-wrap:wrap; }
+.quest-icon{ width:34px; height:34px; flex-shrink:0; border:2px solid var(--ink); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; background:var(--surface2); }
+.quest-title{ flex:1; font-weight:700; font-size:14px; min-width:120px; }
+.quest-xp{ font-size:11px; color:var(--ink-soft); font-weight:700; }
+.quest-actions{ display:flex; gap:6px; }
+.quest-btn{ font-family:'Outfit'; font-weight:800; font-size:12px; border:2px solid var(--ink); border-radius:999px; padding:8px 12px; cursor:pointer; background:#fff; }
+.quest-btn:active{ transform:translateY(1px); }
+.quest-btn.done-btn{ background:var(--green); }
+.quest-btn.skip-btn{ background:var(--pink); }
+.quest-status{ display:flex; align-items:center; gap:8px; }
+.quest-status-pill{ font-family:'Outfit'; font-weight:800; font-size:12px; border:2px solid var(--ink); border-radius:999px; padding:8px 12px; }
+.quest-status-pill.done{ background:var(--green); }
+.quest-status-pill.skipped{ background:var(--pink); }
+.quest-undo{ background:none; border:none; cursor:pointer; font-size:14px; opacity:.55; padding:4px; }
+
+/* --- history table --- */
+.history-summary{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:16px; }
+@media(min-width:700px){ .history-summary{ grid-template-columns:repeat(4,1fr); } }
+.history-mini{ padding:12px; }
+.history-mini .icon{ font-size:16px; }
+.history-mini .hm-title{ font-weight:700; font-size:12px; margin:4px 0 6px; }
+.history-mini .hm-pct{ font-weight:800; font-size:20px; }
+.history-mini .hm-detail{ font-size:10px; color:var(--ink-soft); font-weight:600; }
+.history-table-wrap{ overflow-x:auto; overflow-y:auto; max-height:480px; border:2px solid var(--ink); border-radius:14px; }
+table.history-table{ width:100%; border-collapse:collapse; font-size:13px; min-width:480px; }
+table.history-table th{ position:sticky; top:0; background:var(--ink); color:#fff; font-family:'Outfit'; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.04em; padding:10px 8px; text-align:left; z-index:2; }
+table.history-table td{ padding:9px 8px; border-bottom:1px solid #E4E4E7; font-weight:600; }
+table.history-table tr:nth-child(even){ background:#FAFAF9; }
+table.history-table tr.today-row{ background:var(--surface2); }
+.cell-status{ text-align:center; font-size:15px; }
+.hist-note{ font-size:11px; color:var(--ink-soft); margin-top:10px; }
+
+.ach-card{ padding:18px; }
+.ach-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:12px; }
+.ach-badge{ position:relative; aspect-ratio:1; border:2px solid var(--ink); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:19px; }
+.ach-badge.locked{ background:#F4F4F5; opacity:.35; filter:grayscale(1); }
+.ach-badge.unlocked{ box-shadow:3px 3px 0 rgba(24,24,27,1); }
+.ach-tooltip{ position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:8px; background:var(--ink); color:#fff; font-size:11px; padding:8px 10px; border-radius:10px; width:120px; text-align:center; opacity:0; pointer-events:none; transition:opacity .15s ease; z-index:5; }
+.ach-badge:active .ach-tooltip{ opacity:1; }
+
+.journal-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+@media(min-width:900px){ .journal-grid{ grid-template-columns:2fr 3fr; } }
+.cal-card{ padding:18px; height:fit-content; }
+.cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.cal-nav-btn{ width:32px; height:32px; border:2px solid var(--ink); border-radius:10px; background:#fff; cursor:pointer; font-weight:800; }
+.cal-nav-btn:active{ transform:translateY(1px); }
+.cal-month{ font-weight:800; font-size:16px; }
+.cal-weekdays{ display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:6px; }
+.cal-weekdays span{ text-align:center; font-size:10px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; }
+.cal-days{ display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.cal-day{ position:relative; aspect-ratio:1; border-radius:10px; border:2px solid transparent; font-family:'Outfit'; font-weight:700; font-size:12px; cursor:pointer; background:none; display:flex; align-items:center; justify-content:center; }
+.cal-day:disabled{ opacity:.25; }
+.cal-day.has-entry{ background:var(--surface2); border-color:var(--purple); }
+.cal-day.today{ box-shadow:0 0 0 2px var(--orange); }
+.cal-day.selected{ background:var(--orange); border-color:var(--ink); box-shadow:2px 2px 0 rgba(24,24,27,1); }
+.cal-day .dot{ position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--purple); }
+.cal-legend{ margin-top:12px; display:flex; gap:12px; font-size:10px; color:var(--ink-soft); font-weight:500; flex-wrap:wrap; }
+.legend-dot{ width:10px; height:10px; border-radius:4px; display:inline-block; vertical-align:middle; margin-right:4px; }
+
+.editor-card{ padding:18px; }
+.editor-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.editor-date{ font-weight:800; font-size:18px; }
+.save-btn{ background:var(--purple); border:2px solid var(--ink); border-radius:999px; padding:10px 16px; font-weight:800; font-family:'Outfit'; cursor:pointer; font-size:13px; }
+.save-btn:active{ transform:translateY(1px); }
+.journal-textarea{ width:100%; min-height:150px; padding:14px; border:2px solid var(--ink); border-radius:14px; font-family:'Work Sans'; font-size:16px; line-height:1.6; resize:vertical; }
+.journal-textarea:focus{ outline:2px solid var(--purple); outline-offset:1px; }
+.upload-row{ margin-top:14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.upload-label{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; background:var(--surface3); border:2px solid var(--ink); border-radius:999px; font-weight:800; font-family:'Outfit'; font-size:12px; cursor:pointer; }
+.upload-hint{ font-size:11px; color:var(--ink-soft); }
+.img-grid{ margin-top:14px; display:grid; grid-template-columns:repeat(auto-fill,minmax(96px,1fr)); gap:8px; }
+.img-item{ position:relative; border:2px solid var(--ink); border-radius:14px; overflow:hidden; aspect-ratio:1; }
+.img-item img{ width:100%; height:100%; object-fit:cover; display:block; }
+.img-remove{ position:absolute; top:5px; right:5px; width:24px; height:24px; background:#fff; border:2px solid var(--ink); border-radius:50%; cursor:pointer; font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; }
+
+.overlay{ position:fixed; inset:0; background:rgba(24,24,27,.6); backdrop-filter:blur(2px); z-index:100; display:none; align-items:center; justify-content:center; padding:20px; }
+.overlay.show{ display:flex; }
+.levelup-card{ background:var(--yellow); border:2px solid var(--ink); border-radius:20px; box-shadow:8px 8px 0 rgba(24,24,27,1); padding:36px; text-align:center; max-width:320px; animation:popIn .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes popIn{ from{ transform:scale(.5) rotate(-8deg); opacity:0; } to{ transform:scale(1) rotate(0); opacity:1; } }
+.levelup-num{ font-weight:800; font-size:60px; margin:6px 0; }
+.levelup-close{ margin-top:16px; background:var(--orange); border:2px solid var(--ink); border-radius:999px; padding:12px 20px; font-weight:800; font-family:'Outfit'; cursor:pointer; }
+
+.toast-wrap{ position:fixed; top:calc(10px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%); z-index:200; display:flex; flex-direction:column; gap:8px; align-items:center; width:calc(100% - 32px); }
+.toast{ background:var(--ink); color:#fff; padding:10px 16px; border-radius:12px; font-size:13px; font-weight:600; box-shadow:0 4px 12px rgba(0,0,0,.25); animation:toastIn .25s ease, toastOut .3s ease 3.2s forwards; max-width:320px; text-align:center; }
+@keyframes toastIn{ from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
+@keyframes toastOut{ to{opacity:0; transform:translateY(-10px);} }
+.toast b{ color:var(--yellow); }
+
+.install-banner{ display:none; position:fixed; left:16px; right:16px; bottom:16px; z-index:150; background:var(--ink); color:#fff; border-radius:16px; padding:14px 16px; align-items:center; gap:12px; box-shadow:0 6px 20px rgba(0,0,0,.3); }
+.install-banner.show{ display:flex; }
+.install-banner button{ background:var(--orange); color:var(--ink); border:none; border-radius:999px; padding:9px 14px; font-weight:800; font-family:'Outfit'; font-size:12px; cursor:pointer; white-space:nowrap; }
+.install-banner .txt{ flex:1; font-size:13px; }
+.install-banner .close{ background:none; color:#fff; opacity:.6; font-size:16px; padding:4px; }
+
+/* --- auth screen --- */
+.auth-screen{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+.auth-card{ width:100%; max-width:380px; padding:28px 24px; }
+.auth-logo{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+.auth-tabs{ display:flex; gap:6px; margin-bottom:18px; background:var(--bg); border:2px solid var(--ink); border-radius:999px; padding:4px; }
+.auth-tab{ flex:1; text-align:center; padding:9px 0; border-radius:999px; font-family:'Outfit'; font-weight:800; font-size:13px; cursor:pointer; border:none; background:none; }
+.auth-tab.active{ background:var(--orange); box-shadow:2px 2px 0 rgba(24,24,27,1); }
+.auth-field{ margin-bottom:12px; }
+.auth-field label{ display:block; font-size:11px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.06em; margin-bottom:5px; }
+.auth-field input{ width:100%; padding:12px 14px; border:2px solid var(--ink); border-radius:12px; font-size:16px; font-family:'Work Sans'; }
+.auth-field input:focus{ outline:2px solid var(--orange); outline-offset:1px; }
+.auth-submit{ width:100%; padding:13px; background:var(--purple); border:2px solid var(--ink); border-radius:12px; font-weight:800; font-family:'Outfit'; font-size:14px; cursor:pointer; margin-top:6px; }
+.auth-submit:active{ transform:translateY(1px); }
+.auth-submit:disabled{ opacity:.5; cursor:default; }
+.auth-error{ background:var(--pink); border:2px solid var(--ink); border-radius:10px; padding:9px 12px; font-size:12px; font-weight:600; margin-bottom:12px; }
+.auth-hint{ font-size:11px; color:var(--ink-soft); margin-top:14px; text-align:center; line-height:1.5; }
+
+.hidden{ display:none !important; }
+</style>
+</head>
+<body>
+
+<div class="auth-screen" id="auth-screen">
+  <div class="card auth-card">
+    <div class="auth-logo">
+      <div class="brand-badge">✨</div>
+      <span class="brand-name">StudyQuest</span>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login">Log In</button>
+      <button class="auth-tab" id="tab-register">Register</button>
+    </div>
+    <div id="auth-error" class="auth-error hidden"></div>
+    <form id="auth-form">
+      <div class="auth-field">
+        <label for="auth-username">Username</label>
+        <input id="auth-username" autocomplete="username" required />
+      </div>
+      <div class="auth-field">
+        <label for="auth-password">Password</label>
+        <input id="auth-password" type="password" autocomplete="current-password" required />
+      </div>
+      <button class="auth-submit" id="auth-submit" type="submit">Log In</button>
+    </form>
+    <p class="auth-hint" id="auth-hint">Log in with the same account on your phone and laptop to keep everything in sync.</p>
+  </div>
+</div>
+
+<div id="app-shell" class="hidden">
+
+<div class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-badge">✨</div>
+      <span class="brand-name">StudyQuest</span>
+      <span class="sync-badge" id="sync-badge">☁️ Synced</span>
+    </div>
+    <div class="nav">
+      <button class="nav-btn active" id="nav-dashboard">🏠</button>
+      <button class="nav-btn" id="nav-journal">📓</button>
+      <button class="nav-btn" id="nav-history">📊</button>
+      <button class="nav-btn" id="nav-reset" style="background:var(--pink);">🗑️</button>
+      <button class="nav-btn" id="nav-logout">🚪</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <p class="eyebrow welcome">Welcome back, <span id="welcome-name">scholar</span></p>
+
+  <div id="page-dashboard">
+    <h1 class="page-title">Your Dashboard</h1>
+    <div class="grid">
+      <div class="g-quote card quote-card" id="quote-card">
+        <div class="quote-bg" style="background-image:url('https://images.unsplash.com/photo-1474540412665-1cdae210ae6b?auto=format&fit=crop&w=1200&q=70');"></div>
+        <div class="quote-tint"></div>
+        <div class="quote-content"><span class="quote-mark">"</span></div>
+        <div class="quote-content">
+          <p class="quote-text" id="quote-text">Loading today's spark...</p>
+          <p class="quote-author" id="quote-author"></p>
+        </div>
+      </div>
+
+      <div class="g-xp card xp-card">
+        <p class="eyebrow">Your Level</p>
+        <div class="xp-top">
+          <span class="level-num" id="level-num">1</span>
+          <span class="xp-label" id="xp-progress-text">0 / 100 XP</span>
+        </div>
+        <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+        <p class="xp-total">Total XP earned: <b id="xp-total">0</b></p>
+      </div>
+
+      <div class="g-stats">
+        <div class="stat-grid">
+          <div class="card stat-tile" style="background:var(--yellow);"><span class="icon">🔥</span><span class="stat-val" id="stat-streak">0</span><span class="stat-lbl">Day Streak</span></div>
+          <div class="card stat-tile" style="background:var(--green);"><span class="icon">🎯</span><span class="stat-val" id="stat-attendance">0%</span><span class="stat-lbl">Attendance</span></div>
+          <div class="card stat-tile" style="background:var(--surface2);"><span class="icon">✅</span><span class="stat-val" id="stat-done">0</span><span class="stat-lbl">Tasks Done</span></div>
+          <div class="card stat-tile" style="background:var(--pink);"><span class="icon">⚡</span><span class="stat-val" id="stat-pending">0</span><span class="stat-lbl">Pending</span></div>
+        </div>
+      </div>
+
+      <div class="g-quests card quests-card">
+        <h2 style="font-weight:800; font-size:17px; margin:0 0 4px;">Today's Class Quests</h2>
+        <p class="eyebrow" style="margin-bottom:14px;" id="quest-date-label">—</p>
+        <div id="quest-list"></div>
+      </div>
+
+      <div class="g-tasks card task-card">
+        <h2 style="font-weight:800; font-size:17px; margin:0 0 14px;">Extra Study Tasks</h2>
+        <form class="task-form" id="task-form">
+          <input class="task-input" id="task-input" placeholder="What else do you need to study?" required />
+          <select class="diff-select" id="task-difficulty" style="background:var(--green);">
+            <option value="easy">Easy +10</option>
+            <option value="medium">Medium +25</option>
+            <option value="hard">Hard +50</option>
+          </select>
+          <button class="add-btn" type="submit">+ Add</button>
+        </form>
+        <div class="task-list" id="task-list"></div>
+        <div class="done-section hidden" id="done-section">
+          <p class="eyebrow" id="done-count">Completed</p>
+          <div id="done-list"></div>
+        </div>
+      </div>
+
+      <div class="g-ach card ach-card">
+        <h2 style="font-weight:800; font-size:17px; margin:0;">Achievements</h2>
+        <p class="eyebrow" id="ach-count" style="margin-top:4px;">0 of 0 unlocked</p>
+        <div class="ach-grid" id="ach-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-journal" class="hidden">
+    <h1 class="page-title">Your Journal</h1>
+    <div class="journal-grid">
+      <div class="card cal-card">
+        <div class="cal-head">
+          <button class="cal-nav-btn" id="cal-prev">‹</button>
+          <span class="cal-month" id="cal-month"></span>
+          <button class="cal-nav-btn" id="cal-next">›</button>
+        </div>
+        <div class="cal-weekdays"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+        <div class="cal-days" id="cal-days"></div>
+        <div class="cal-legend">
+          <span><span class="legend-dot" style="background:var(--surface2); border:2px solid var(--purple);"></span>Has entry</span>
+          <span><span class="legend-dot" style="box-shadow:0 0 0 2px var(--orange); background:#fff;"></span>Today</span>
+        </div>
+      </div>
+
+      <div class="card editor-card">
+        <div class="editor-head">
+          <div>
+            <p class="eyebrow">Entry for</p>
+            <h2 class="editor-date" id="editor-date">—</h2>
+          </div>
+          <button class="save-btn" id="save-entry">💾 Save</button>
+        </div>
+        <textarea class="journal-textarea" id="journal-content" placeholder="What happened today? Wins, struggles, thoughts..."></textarea>
+        <div class="upload-row">
+          <label class="upload-label">🖼️ Add Photos
+            <input type="file" accept="image/*" multiple id="journal-image-input" style="display:none;" />
+          </label>
+          <span class="upload-hint">Auto-resized to keep things fast</span>
+        </div>
+        <div class="img-grid" id="journal-images"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-history" class="hidden">
+    <h1 class="page-title">Class History</h1>
+    <div class="history-summary" id="history-summary"></div>
+    <div class="card" style="padding:18px;">
+      <h2 style="font-weight:800; font-size:16px; margin:0 0 12px;">Day by day</h2>
+      <div class="history-table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr id="history-head"></tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
+      <p class="hist-note">✅ attended · 🚫 skipped · · not marked yet. Showing the last 30 days.</p>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="levelup-overlay">
+  <div class="levelup-card">
+    <p class="eyebrow">Level Up!</p>
+    <p class="levelup-num" id="levelup-num">2</p>
+    <p style="font-weight:500; color:#3F3F46;">You're getting stronger, scholar. Keep going!</p>
+    <button class="levelup-close" id="levelup-close">Continue the Quest →</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<div class="install-banner" id="install-banner">
+  <span class="txt">Install StudyQuest on your home screen for the full app feel.</span>
+  <button id="install-btn">Install</button>
+  <button class="close" id="install-close">✕</button>
+</div>
+
+</div><!-- /app-shell -->
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').classList.add('show');
+});
+document.getElementById('install-btn').onclick = async () => {
+  document.getElementById('install-banner').classList.remove('show');
+  if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; }
+};
+document.getElementById('install-close').onclick = () => document.getElementById('install-banner').classList.remove('show');
+
+const $ = (id) => document.getElementById(id);
+
+/* ============================================================
+   PERMANENT DAILY CLASS QUESTS — these never disappear.
+   Edit this list if your subjects/schedule ever change.
+============================================================ */
+const PERMANENT_QUESTS = [
+  { id:'math', title:'Maths Class',            icon:'➗', xp:20 },
+  { id:'gs',   title:'G.S. Class',              icon:'🌍', xp:20 },
+  { id:'eng1', title:'English Revision #1',     icon:'📖', xp:15 },
+  { id:'eng2', title:'English Revision #2',     icon:'📖', xp:15 },
+];
+
+const XP_MAP = { easy: 10, medium: 25, hard: 50 };
+const ACHIEVEMENTS = [
+  { id:'first_task', name:'First Steps', desc:'Complete your first task', icon:'⭐' },
+  { id:'task_10', name:'Task Slayer', desc:'Complete 10 tasks', icon:'⚔️' },
+  { id:'task_25', name:'Grinder', desc:'Complete 25 tasks', icon:'🔥' },
+  { id:'task_50', name:'Unstoppable', desc:'Complete 50 tasks', icon:'⚡' },
+  { id:'level_5', name:'Rising Scholar', desc:'Reach Level 5', icon:'🎖️' },
+  { id:'level_10', name:'Study Master', desc:'Reach Level 10', icon:'👑' },
+  { id:'streak_3', name:'On a Roll', desc:'3-day streak', icon:'🔥' },
+  { id:'streak_7', name:'Week Warrior', desc:'7-day streak', icon:'🏆' },
+  { id:'journal_1', name:'Dear Diary', desc:'Write your first journal entry', icon:'📔' },
+  { id:'journal_5', name:'Storyteller', desc:'Write 5 journal entries', icon:'✒️' },
+  { id:'attendance_7', name:'Perfect Week', desc:'Every class, 7 days straight', icon:'🥇' },
+];
+const QUOTES = [
+  { quote:"The secret of getting ahead is getting started.", author:"Mark Twain" },
+  { quote:"Success is the sum of small efforts, repeated day in and day out.", author:"Robert Collier" },
+  { quote:"Don't watch the clock; do what it does. Keep going.", author:"Sam Levenson" },
+  { quote:"Discipline is choosing between what you want now and what you want most.", author:"Abraham Lincoln" },
+  { quote:"The expert in anything was once a beginner.", author:"Helen Hayes" },
+  { quote:"Small daily improvements are the key to staggering long-term results.", author:"Anonymous" },
+  { quote:"You don't have to be great to start, but you have to start to be great.", author:"Zig Ziglar" },
+  { quote:"Focus on being productive instead of busy.", author:"Tim Ferriss" },
+  { quote:"Study while others are sleeping; work while others are loafing.", author:"William A. Ward" },
+  { quote:"Push yourself, because no one else is going to do it for you.", author:"Anonymous" },
+];
+
+const pad = (n) => String(n).padStart(2,'0');
+const dateKey = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const sameDay = (a,b) => dateKey(a)===dateKey(b);
+const isToday = (d) => sameDay(d, new Date());
+const isFuture = (d) => { const t=new Date(); t.setHours(0,0,0,0); const dd=new Date(d); dd.setHours(0,0,0,0); return dd>t; };
+function escapeHtml(s){ const div = document.createElement('div'); div.textContent = s; return div.innerHTML; }
+function showToast(html){
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = html;
+  $('toast-wrap').appendChild(el);
+  setTimeout(()=> el.remove(), 3600);
+}
+
+/* ============================================================
+   AUTH + CLOUD SYNC
+   - The whole app's data (tasks/stats/questLog/journal) lives
+     in one `record` object that mirrors what's on the server.
+   - Every mutation saves to localStorage immediately (instant,
+     works offline) and pushes to the server in the background
+     so your other device picks it up next time it syncs.
+============================================================ */
+let authToken = localStorage.getItem('studyquest_token') || null;
+let authUsername = localStorage.getItem('studyquest_username') || null;
+let record = null;
+let pushTimer = null;
+let pollTimer = null;
+
+function cacheKey(){ return 'studyquest_cache_' + (authUsername||'').toLowerCase(); }
+function saveLocalCache(){ try{ localStorage.setItem(cacheKey(), JSON.stringify(record)); }catch(e){} }
+function loadLocalCache(){ try{ const raw = localStorage.getItem(cacheKey()); return raw ? JSON.parse(raw) : null; }catch(e){ return null; } }
+
+function setSyncBadge(state){
+  const el = $('sync-badge');
+  if(!el) return;
+  if(state==='synced') el.textContent = '☁️ Synced';
+  else if(state==='syncing') el.textContent = '⏳ Syncing…';
+  else if(state==='offline') el.textContent = '⚠️ Offline (saved on this device)';
+  else if(state==='error') el.textContent = '⚠️ Sync error';
+}
+
+async function apiCall(path, method, body){
+  const res = await fetch(path, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  let data = {};
+  try{ data = await res.json(); }catch(e){}
+  if(!res.ok) throw Object.assign(new Error(data.error || 'Request failed'), { status: res.status, data });
+  return data;
+}
+
+function schedulePush(){
+  record.updatedAt = Date.now();
+  saveLocalCache();
+  clearTimeout(pushTimer);
+  setSyncBadge('syncing');
+  pushTimer = setTimeout(pushState, 700);
+}
+
+async function pushState(){
+  if(!authToken) return;
+  try{
+    const res = await apiCall('/api/state', 'POST', record);
+    if(res.stale){ record = res.record; saveLocalCache(); renderAll(); }
+    setSyncBadge('synced');
+  }catch(e){
+    setSyncBadge(e.status === 401 ? 'error' : 'offline');
+  }
+}
+
+async function pullState(silent){
+  if(!authToken) return;
+  try{
+    const res = await apiCall('/api/state', 'GET');
+    if(res.record && (res.record.updatedAt||0) > (record ? record.updatedAt||0 : -1)){
+      record = res.record;
+      saveLocalCache();
+      renderAll();
+      if(!silent) showToast('Synced with your other device ✧');
+    }
+    setSyncBadge('synced');
+  }catch(e){
+    setSyncBadge(e.status === 401 ? 'error' : 'offline');
+  }
+}
+
+function startSyncLoop(){
+  clearInterval(pollTimer);
+  pollTimer = setInterval(() => pullState(true), 25000);
+  window.addEventListener('visibilitychange', () => { if(!document.hidden) pullState(true); });
+  window.addEventListener('focus', () => pullState(true));
+}
+
+function defaultRecord(){
+  return { tasks: [], stats: { xp:0, tasksCompleted:0, streak:0, lastActiveDate:null, achievements:[], journalCount:0 }, questLog:{}, journal:{}, updatedAt:0 };
+}
+
+/* ---------- auth screen wiring ---------- */
+let authMode = 'login';
+function setAuthMode(mode){
+  authMode = mode;
+  $('tab-login').classList.toggle('active', mode==='login');
+  $('tab-register').classList.toggle('active', mode==='register');
+  $('auth-submit').textContent = mode==='login' ? 'Log In' : 'Create Account';
+  $('auth-password').autocomplete = mode==='login' ? 'current-password' : 'new-password';
+  $('auth-hint').textContent = mode==='login'
+    ? 'Log in with the same account on your phone and laptop to keep everything in sync.'
+    : 'Pick a username and password. Use this same login on every device you want synced.';
+  $('auth-error').classList.add('hidden');
+}
+$('tab-login').onclick = () => setAuthMode('login');
+$('tab-register').onclick = () => setAuthMode('register');
+
+$('auth-form').onsubmit = async (e) => {
+  e.preventDefault();
+  const username = $('auth-username').value.trim();
+  const password = $('auth-password').value;
+  const btn = $('auth-submit');
+  btn.disabled = true;
+  $('auth-error').classList.add('hidden');
+  try{
+    const data = await apiCall(authMode==='login' ? '/api/login' : '/api/register', 'POST', { username, password });
+    authToken = data.token;
+    authUsername = data.username;
+    localStorage.setItem('studyquest_token', authToken);
+    localStorage.setItem('studyquest_username', authUsername);
+    record = data.record || defaultRecord();
+    saveLocalCache();
+    enterApp();
+  }catch(err){
+    $('auth-error').textContent = err.message || 'Something went wrong. Try again.';
+    $('auth-error').classList.remove('hidden');
+  }finally{
+    btn.disabled = false;
+  }
+};
+
+$('nav-logout').onclick = async () => {
+  if(!confirm('Log out of StudyQuest on this device?')) return;
+  try{ await apiCall('/api/logout', 'POST'); }catch(e){}
+  clearInterval(pollTimer);
+  localStorage.removeItem('studyquest_token');
+  localStorage.removeItem('studyquest_username');
+  authToken = null; authUsername = null; record = null;
+  $('app-shell').classList.add('hidden');
+  $('auth-screen').classList.remove('hidden');
+  $('auth-username').value=''; $('auth-password').value='';
+  setAuthMode('login');
+};
+
+function enterApp(){
+  $('welcome-name').textContent = authUsername || 'scholar';
+  $('auth-screen').classList.add('hidden');
+  $('app-shell').classList.remove('hidden');
+  wireAppEvents();
+  renderAll();
+  startSyncLoop();
+  pullState(true);
+}
+
+/* ---------- boot ---------- */
+(async function boot(){
+  if(authToken && authUsername){
+    record = loadLocalCache() || defaultRecord();
+    enterApp();
+    try{ await pullState(true); }catch(e){}
+  } else {
+    setAuthMode('login');
+  }
+})();
+
+/* ============================================================
+   APP RENDERING + LOGIC (runs only once logged in)
+============================================================ */
+let calMonth = new Date();
+let selectedDate = new Date();
+let currentImages = [];
+let eventsWired = false;
+
+function wireAppEvents(){
+  if(eventsWired) return;
+  eventsWired = true;
+  $('nav-dashboard').onclick = () => switchPage('dashboard');
+  $('nav-journal').onclick = () => switchPage('journal');
+  $('nav-history').onclick = () => { switchPage('history'); renderHistory(); };
+  $('nav-reset').onclick = resetAll;
+  $('task-form').onsubmit = onAddTask;
+  $('cal-prev').onclick = () => { calMonth.setMonth(calMonth.getMonth()-1); renderCalendar(); };
+  $('cal-next').onclick = () => { calMonth.setMonth(calMonth.getMonth()+1); renderCalendar(); };
+  $('save-entry').onclick = saveEntry;
+  $('journal-image-input').onchange = onImageUpload;
+  $('levelup-close').onclick = () => $('levelup-overlay').classList.remove('show');
+}
+
+function renderAll(){
+  renderQuote();
+  renderXP();
+  renderQuests();
+  renderStats();
+  renderTasks();
+  renderAchievements();
+  renderCalendar();
+  loadEntry(selectedDate);
+  if(!$('page-history').classList.contains('hidden')) renderHistory();
+}
+
+function switchPage(page){
+  $('page-dashboard').classList.toggle('hidden', page!=='dashboard');
+  $('page-journal').classList.toggle('hidden', page!=='journal');
+  $('page-history').classList.toggle('hidden', page!=='history');
+  $('nav-dashboard').classList.toggle('active', page==='dashboard');
+  $('nav-journal').classList.toggle('active', page==='journal');
+  $('nav-history').classList.toggle('active', page==='history');
+}
+
+function renderQuote(){
+  const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+  const q = QUOTES[dayOfYear % QUOTES.length];
+  $('quote-text').textContent = `"${q.quote}"`;
+  $('quote-author').textContent = `— ${q.author}`;
+}
+
+function levelInfo(xp){
+  let level=1, remaining=xp, need=100;
+  while(remaining>=need){ remaining-=need; level++; need=level*100; }
+  return { level, xpInLevel:remaining, xpNeeded:need };
+}
+
+function renderXP(){
+  const { level, xpInLevel, xpNeeded } = levelInfo(record.stats.xp||0);
+  $('level-num').textContent = level;
+  $('xp-progress-text').textContent = `${xpInLevel} / ${xpNeeded} XP`;
+  $('xp-total').textContent = record.stats.xp||0;
+  const pct = Math.min(100, Math.round((xpInLevel/xpNeeded)*100));
+  requestAnimationFrame(()=> { $('xp-fill').style.width = pct+'%'; });
+}
+
+/* ---------- permanent class quests ---------- */
+function getDayLog(key){ if(!record.questLog[key]) record.questLog[key] = {}; return record.questLog[key]; }
+function isFullyDone(day){ return !!day && PERMANENT_QUESTS.every(q => day[q.id]==='done'); }
+
+function computeAttendanceStreak(){
+  let streak = 0;
+  const d = new Date();
+  if(!isFullyDone(record.questLog[dateKey(d)])) d.setDate(d.getDate()-1);
+  while(true){
+    const day = record.questLog[dateKey(d)];
+    if(isFullyDone(day)){ streak++; d.setDate(d.getDate()-1); } else break;
+  }
+  return streak;
+}
+
+function computeAttendancePct(){
+  let done=0, skipped=0;
+  for(const key in record.questLog){
+    const day = record.questLog[key];
+    for(const q of PERMANENT_QUESTS){
+      if(day[q.id]==='done') done++;
+      else if(day[q.id]==='skipped') skipped++;
+    }
+  }
+  const total = done+skipped;
+  return total===0 ? 0 : Math.round((done/total)*100);
+}
+
+function renderQuests(){
+  const today = new Date();
+  const key = dateKey(today);
+  const day = getDayLog(key);
+  $('quest-date-label').textContent = today.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+  $('quest-list').innerHTML = PERMANENT_QUESTS.map(q => {
+    const status = day[q.id];
+    let statusHtml;
+    if(status === 'done'){
+      statusHtml = `<div class="quest-status"><span class="quest-status-pill done">✅ Done</span><button class="quest-undo" data-undo="${q.id}" title="Undo">↺</button></div>`;
+    } else if(status === 'skipped'){
+      statusHtml = `<div class="quest-status"><span class="quest-status-pill skipped">🚫 Skipped</span><button class="quest-undo" data-undo="${q.id}" title="Undo">↺</button></div>`;
+    } else {
+      statusHtml = `<div class="quest-actions">
+        <button class="quest-btn done-btn" data-mark="${q.id}" data-status="done">✅ Done</button>
+        <button class="quest-btn skip-btn" data-mark="${q.id}" data-status="skipped">🚫 Skip</button>
+      </div>`;
+    }
+    return `<div class="quest-row">
+      <div class="quest-icon">${q.icon}</div>
+      <div class="quest-title">${q.title}<div class="quest-xp">+${q.xp} XP</div></div>
+      ${statusHtml}
+    </div>`;
+  }).join('');
+
+  $('quest-list').querySelectorAll('[data-mark]').forEach(btn => {
+    btn.onclick = () => markQuest(btn.dataset.mark, btn.dataset.status);
+  });
+  $('quest-list').querySelectorAll('[data-undo]').forEach(btn => {
+    btn.onclick = () => markQuest(btn.dataset.undo, null);
+  });
+}
+
+function markQuest(questId, newStatus){
+  const q = PERMANENT_QUESTS.find(x=>x.id===questId);
+  const key = dateKey(new Date());
+  const day = getDayLog(key);
+  const prev = day[questId] || null;
+  if(prev === newStatus) return;
+
+  if(prev === 'done') record.stats.xp = Math.max(0, (record.stats.xp||0) - q.xp);
+  if(newStatus === 'done') record.stats.xp = (record.stats.xp||0) + q.xp;
+
+  if(newStatus){ day[questId] = newStatus; } else { delete day[questId]; }
+
+  if(newStatus === 'done'){
+    const todayKey = dateKey(new Date());
+    const yestKey = dateKey(new Date(Date.now()-86400000));
+    if(record.stats.lastActiveDate !== todayKey){
+      record.stats.streak = (record.stats.lastActiveDate === yestKey) ? (record.stats.streak||0)+1 : 1;
+      record.stats.lastActiveDate = todayKey;
+    }
+  }
+
+  const newAch = computeNewAchievements();
+  record.stats.achievements = [...(record.stats.achievements||[]), ...newAch];
+
+  renderQuests(); renderXP(); renderStats(); renderAchievements();
+  if(newStatus === 'done') showToast(`+${q.xp} XP — ${escapeHtml(q.title)} attended!`);
+  else if(newStatus === 'skipped') showToast(`Marked "${escapeHtml(q.title)}" as skipped today.`);
+  newAch.forEach(id => { const a = ACHIEVEMENTS.find(x=>x.id===id); if(a) showToast(`🏆 Achievement unlocked: <b>${a.name}</b>`); });
+
+  schedulePush();
+}
+
+function renderStats(){
+  $('stat-streak').textContent = record.stats.streak||0;
+  $('stat-attendance').textContent = computeAttendancePct()+'%';
+  $('stat-done').textContent = record.stats.tasksCompleted||0;
+  $('stat-pending').textContent = record.tasks.filter(t=>!t.completed).length;
+}
+
+/* ---------- history table ---------- */
+function renderHistory(){
+  const head = ['Date', ...PERMANENT_QUESTS.map(q=>q.title.replace(' Revision','').replace(' Class',''))];
+  $('history-head').innerHTML = head.map(h=>`<th>${escapeHtml(h)}</th>`).join('');
+
+  const rows = [];
+  const today = new Date();
+  for(let i=0;i<30;i++){
+    const d = new Date(today); d.setDate(d.getDate()-i);
+    rows.push(d);
+  }
+  $('history-body').innerHTML = rows.map(d => {
+    const key = dateKey(d);
+    const day = record.questLog[key] || {};
+    const label = d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+    const cells = PERMANENT_QUESTS.map(q => {
+      const s = day[q.id];
+      const icon = s==='done' ? '✅' : s==='skipped' ? '🚫' : '·';
+      return `<td class="cell-status">${icon}</td>`;
+    }).join('');
+    return `<tr class="${isToday(d)?'today-row':''}"><td>${label}</td>${cells}</tr>`;
+  }).join('');
+
+  $('history-summary').innerHTML = PERMANENT_QUESTS.map(q => {
+    let done=0, skipped=0;
+    for(const key in record.questLog){
+      const s = record.questLog[key][q.id];
+      if(s==='done') done++; else if(s==='skipped') skipped++;
+    }
+    const total = done+skipped;
+    const pct = total===0 ? '—' : Math.round((done/total)*100)+'%';
+    return `<div class="card history-mini">
+      <span class="icon">${q.icon}</span>
+      <div class="hm-title">${escapeHtml(q.title)}</div>
+      <div class="hm-pct">${pct}</div>
+      <div class="hm-detail">${done} attended · ${skipped} skipped</div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- extra study tasks (unchanged logic, now synced) ---------- */
+function computeNewAchievements(){
+  const s = record.stats;
+  const unlocked = new Set(s.achievements||[]);
+  const { level } = levelInfo(s.xp||0);
+  const checks = {
+    first_task: (s.tasksCompleted||0) >= 1,
+    task_10: (s.tasksCompleted||0) >= 10,
+    task_25: (s.tasksCompleted||0) >= 25,
+    task_50: (s.tasksCompleted||0) >= 50,
+    level_5: level >= 5,
+    level_10: level >= 10,
+    streak_3: (s.streak||0) >= 3,
+    streak_7: (s.streak||0) >= 7,
+    journal_1: (s.journalCount||0) >= 1,
+    journal_5: (s.journalCount||0) >= 5,
+    attendance_7: computeAttendanceStreak() >= 7,
+  };
+  const fresh = [];
+  for(const [id, ok] of Object.entries(checks)){ if(ok && !unlocked.has(id)) fresh.push(id); }
+  return fresh;
+}
+
+function renderTasks(){
+  const pending = record.tasks.filter(t=>!t.completed);
+  const done = record.tasks.filter(t=>t.completed);
+  const list = $('task-list');
+  if(pending.length===0){
+    list.innerHTML = `<p class="empty-msg">No extra tasks pending. Add one above and start earning XP! ✧</p>`;
+  } else {
+    list.innerHTML = pending.map(t => `
+      <div class="task-row" data-id="${t.id}">
+        <button class="checkbox" data-action="complete" data-id="${t.id}"></button>
+        <span class="task-title">${escapeHtml(t.title)}</span>
+        <span class="pill ${t.difficulty}">+${XP_MAP[t.difficulty]}</span>
+        <button class="del-btn" data-action="delete" data-id="${t.id}">✕</button>
+      </div>
+    `).join('');
+  }
+  const doneSection = $('done-section');
+  if(done.length===0){ doneSection.classList.add('hidden'); }
+  else{
+    doneSection.classList.remove('hidden');
+    $('done-count').textContent = `Completed (${done.length})`;
+    $('done-list').innerHTML = done.slice(-8).reverse().map(t => `
+      <div class="done-row">
+        <span>✅</span>
+        <span class="task-title" style="flex:1;">${escapeHtml(t.title)}</span>
+        <span style="font-weight:700;">+${XP_MAP[t.difficulty]}</span>
+      </div>
+    `).join('');
+  }
+  list.querySelectorAll('[data-action="complete"]').forEach(b => b.onclick = () => completeTask(b.dataset.id));
+  list.querySelectorAll('[data-action="delete"]').forEach(b => b.onclick = () => deleteTask(b.dataset.id));
+}
+
+function onAddTask(e){
+  e.preventDefault();
+  const title = $('task-input').value.trim();
+  if(!title) return;
+  const difficulty = $('task-difficulty').value;
+  const task = { id: 't'+Date.now()+Math.random().toString(36).slice(2,7), title, difficulty, completed:false, createdAt: new Date().toISOString() };
+  record.tasks.unshift(task);
+  $('task-input').value = '';
+  renderTasks(); renderStats();
+  schedulePush();
+}
+
+function completeTask(id){
+  const task = record.tasks.find(t=>t.id===id);
+  if(!task || task.completed) return;
+  task.completed = true;
+  task.completedAt = new Date().toISOString();
+
+  const oldLevel = levelInfo(record.stats.xp||0).level;
+  const today = dateKey(new Date());
+  const yesterday = dateKey(new Date(Date.now()-86400000));
+  let streak = record.stats.streak||0;
+  if(record.stats.lastActiveDate === today){ /* no change */ }
+  else if(record.stats.lastActiveDate === yesterday){ streak += 1; }
+  else{ streak = 1; }
+
+  record.stats.xp = (record.stats.xp||0) + XP_MAP[task.difficulty];
+  record.stats.tasksCompleted = (record.stats.tasksCompleted||0) + 1;
+  record.stats.streak = streak;
+  record.stats.lastActiveDate = today;
+
+  const newAch = computeNewAchievements();
+  record.stats.achievements = [...(record.stats.achievements||[]), ...newAch];
+
+  renderTasks(); renderXP(); renderStats(); renderAchievements();
+
+  showToast(`+${XP_MAP[task.difficulty]} XP earned!`);
+  newAch.forEach(id => { const a = ACHIEVEMENTS.find(x=>x.id===id); if(a) showToast(`🏆 Achievement unlocked: <b>${a.name}</b>`); });
+
+  const newLevel = levelInfo(record.stats.xp).level;
+  if(newLevel > oldLevel){
+    $('levelup-num').textContent = newLevel;
+    $('levelup-num').classList.remove('pop'); void $('levelup-num').offsetWidth; $('levelup-num').classList.add('pop');
+    $('levelup-overlay').classList.add('show');
+  }
+  schedulePush();
+}
+
+function deleteTask(id){
+  record.tasks = record.tasks.filter(t=>t.id!==id);
+  renderTasks(); renderStats();
+  schedulePush();
+}
+
+function renderAchievements(){
+  const unlocked = new Set(record.stats.achievements||[]);
+  $('ach-count').textContent = `${unlocked.size} of ${ACHIEVEMENTS.length} unlocked`;
+  $('ach-grid').innerHTML = ACHIEVEMENTS.map(a => `
+    <div class="ach-badge ${unlocked.has(a.id)?'unlocked':'locked'}" style="${unlocked.has(a.id)?'background:'+badgeColor(a.id)+';':''}">
+      ${a.icon}
+      <div class="ach-tooltip"><b style="display:block;">${a.name}</b>${a.desc}</div>
+    </div>
+  `).join('');
+}
+function badgeColor(id){
+  const colors=['var(--yellow)','var(--green)','var(--pink)','var(--surface2)','var(--surface3)'];
+  let h=0; for(const c of id) h+=c.charCodeAt(0);
+  return colors[h % colors.length];
+}
+
+/* ---------- journal (now stored inside the synced record) ---------- */
+function renderCalendar(){
+  $('cal-month').textContent = calMonth.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+  const year = calMonth.getFullYear(), month = calMonth.getMonth();
+  const firstDay = new Date(year, month, 1);
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const blanks = firstDay.getDay();
+  let html = '';
+  for(let i=0;i<blanks;i++) html += `<span></span>`;
+  for(let d=1; d<=daysInMonth; d++){
+    const date = new Date(year, month, d);
+    const key = dateKey(date);
+    const classes = ['cal-day'];
+    if(record.journal[key]) classes.push('has-entry');
+    if(isToday(date)) classes.push('today');
+    if(sameDay(date, selectedDate)) classes.push('selected');
+    const disabled = isFuture(date) && !isToday(date);
+    html += `<button class="${classes.join(' ')}" data-date="${key}" ${disabled?'disabled':''}>${d}${record.journal[key]&&!sameDay(date,selectedDate)?'<span class="dot"></span>':''}</button>`;
+  }
+  $('cal-days').innerHTML = html;
+  $('cal-days').querySelectorAll('.cal-day:not(:disabled)').forEach(btn => {
+    btn.onclick = () => {
+      const [y,m,d] = btn.dataset.date.split('-').map(Number);
+      selectedDate = new Date(y, m-1, d);
+      renderCalendar();
+      loadEntry(selectedDate);
+    };
+  });
+}
+
+function loadEntry(date){
+  const key = dateKey(date);
+  const entry = record.journal[key] || { content:'', images:[] };
+  $('editor-date').textContent = date.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+  $('journal-content').value = entry.content || '';
+  currentImages = entry.images || [];
+  renderJournalImages();
+}
+
+function renderJournalImages(){
+  $('journal-images').innerHTML = currentImages.map((src,i) => `
+    <div class="img-item">
+      <img src="${src}" alt="Journal photo ${i+1}" />
+      <button class="img-remove" data-idx="${i}">✕</button>
+    </div>
+  `).join('');
+  $('journal-images').querySelectorAll('.img-remove').forEach(b => {
+    b.onclick = () => { currentImages.splice(Number(b.dataset.idx),1); renderJournalImages(); };
+  });
+}
+
+function resizeImage(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const maxDim = 900;
+        let { width, height } = img;
+        if(width > maxDim || height > maxDim){
+          const scale = maxDim / Math.max(width, height);
+          width = Math.round(width*scale); height = Math.round(height*scale);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function onImageUpload(e){
+  const files = Array.from(e.target.files || []);
+  for(const file of files){
+    try{
+      const dataUrl = await resizeImage(file);
+      currentImages.push(dataUrl);
+    }catch(err){ showToast(`Couldn't load ${escapeHtml(file.name)}`); }
+  }
+  renderJournalImages();
+  e.target.value = '';
+}
+
+async function saveEntry(){
+  const key = dateKey(selectedDate);
+  const content = $('journal-content').value;
+  const hasContent = content.trim().length>0 || currentImages.length>0;
+  const btn = $('save-entry');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  const existedBefore = !!record.journal[key];
+
+  if(!hasContent){
+    delete record.journal[key];
+    if(existedBefore) record.stats.journalCount = Math.max(0, (record.stats.journalCount||0)-1);
+  } else {
+    record.journal[key] = { content, images: currentImages };
+    if(!existedBefore){
+      record.stats.journalCount = (record.stats.journalCount||0)+1;
+      const newAch = computeNewAchievements();
+      record.stats.achievements = [...(record.stats.achievements||[]), ...newAch];
+      newAch.forEach(id => { const a = ACHIEVEMENTS.find(x=>x.id===id); if(a) showToast(`🏆 Achievement unlocked: <b>${a.name}</b>`); });
+      renderAchievements();
+    }
+  }
+
+  btn.disabled = false; btn.textContent = '💾 Save';
+  showToast('Journal entry saved ✧');
+  renderCalendar();
+  schedulePush();
+}
+
+async function resetAll(){
+  if(!confirm('This will erase all tasks, XP, quest history, and journal entries for your account (on every device). Continue?')) return;
+  record = defaultRecord();
+  renderAll();
+  schedulePush();
+  showToast('Fresh start! Everything has been reset.');
+}
+</script>
+</body>
+</html>
